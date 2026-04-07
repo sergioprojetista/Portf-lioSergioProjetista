@@ -1,9 +1,12 @@
 // ──────────────────────────────────────────────────────────────
 // PROJECTS
 // Imagens: coloque os arquivos em src/assets/ com os nomes abaixo.
-// Projects 01 e 02: substitua os caminhos pelas imagens reais.
-// Projects 03 e 04: adicione suas imagens quando tiver os renders.
 // ──────────────────────────────────────────────────────────────
+
+import bombaView1 from './assets/bomba_view1.png';
+import eixoView1 from './assets/eixo_view1.png';
+import suporteRoda from './assets/suporte_roda_maquina_agricola.png';
+import suporteSuspensao from './assets/suporte_suspensao_maquina.png';
 
 export interface ProjectCase {
   id: string;
@@ -45,7 +48,7 @@ export const PROJECTS: ProjectCase[] = [
     ],
     executionTime: '3 semanas',
     tags: ['Usinagem CNC', 'Fixação Pneumática', 'Estrutura Portal', 'Hidráulico', 'NR-12'],
-    imageUrl: '/src/assets/bomba_view1.png',
+    imageUrl: bombaView1,
   },
   {
     id: '02',
@@ -67,7 +70,7 @@ export const PROJECTS: ProjectCase[] = [
     ],
     executionTime: '2.5 semanas de desenvolvimento',
     tags: ['Usinagem', 'V-Block', 'Eixo', 'Multi-plano', 'Suspensão'],
-    imageUrl: '/src/assets/eixo_view1.png',
+    imageUrl: eixoView1,
   },
   {
     id: '03',
@@ -89,8 +92,7 @@ export const PROJECTS: ProjectCase[] = [
     ],
     executionTime: '3 semanas de projeto e validação',
     tags: ['Usinagem CNC', 'Multi-clamp', 'Estrutura L', 'Precisão'],
-    // SUBSTITUIR: adicione a imagem real quando tiver os renders
-    imageUrl: '/src/assets/suporte_roda_maquina_agricola.png',
+    imageUrl: suporteRoda,
   },
   {
     id: '04',
@@ -112,15 +114,13 @@ export const PROJECTS: ProjectCase[] = [
     ],
     executionTime: '4 semanas (projeto complexo)',
     tags: ['Usinagem', 'Modular', 'Sensor', 'Telescópico', 'Pulverizador'],
-    // SUBSTITUIR: adicione a imagem real quando tiver os renders
-    imageUrl: '/src/assets/suporte_suspensao_maquina.png',
+    imageUrl: suporteSuspensao,
   },
 ];
 
 // ──────────────────────────────────────────────────────────────
 // TESTIMONIALS
 // SUBSTITUIR: troque pelos depoimentos reais dos clientes.
-// Ideal: 1–2 frases diretas, nome completo, cargo e empresa.
 // ──────────────────────────────────────────────────────────────
 
 export interface Testimonial {
