@@ -30,6 +30,8 @@ import { cn } from './lib/utils';
 // Coloque o arquivo em: src/assets/jacto-logo.png
 // Quando o arquivo estiver lá, descomente a linha abaixo e comente a de baixo:
 import jactoLogo from './assets/jacto-logo.png';
+import logoSergio from './assets/logo-sergio.png';
+import logoS from './assets/favicon.png';
 // const jactoLogo: string | undefined = undefined; // ← remova esta linha ao adicionar o import
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -243,9 +245,9 @@ export default function App() {
       <nav className="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
           {/* Logo */}
-          <a href="#" aria-label="Voltar ao topo" className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg md:text-xl tracking-tighter flex items-center gap-2">
-              <Box className="text-brand-accent" size={20} />
+          <a href="#" aria-label="Voltar ao topo" className="flex items-center gap-3">
+            <img src={logoS} alt="Sergio Engenharia" className="h-10 w-auto object-contain" />
+            <span className="font-display font-bold text-lg tracking-tighter hidden sm:block">
               SERGIO<span className="text-brand-accent">ENG</span>
             </span>
           </a>
@@ -757,8 +759,8 @@ export default function App() {
                 viewport={{ once: true }}
                 className="bg-[#0a0a0a] text-white p-12 rounded-[40px] relative z-10 space-y-8 shadow-2xl"
               >
-                <div className="w-16 h-16 bg-brand-accent rounded-2xl flex items-center justify-center text-black mb-6">
-                  <ShieldCheck size={32} />
+                <div className="w-16 h-16 bg-brand-accent rounded-2xl flex items-center justify-center mb-6 overflow-hidden p-1">
+                  <img src={logoS} alt="S" className="w-full h-full object-contain" />
                 </div>
                 <h3 className="text-3xl font-bold tracking-tighter">GARANTIA DE <br />PERFORMANCE.</h3>
                 <p className="text-brand-muted leading-relaxed">
