@@ -25,6 +25,14 @@ import {
 import { PROJECTS, TESTIMONIALS, ProjectCase } from './constants';
 import { cn } from './lib/utils';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// LOGO DA JACTO AGRÍCOLA
+// Coloque o arquivo em: src/assets/jacto-logo.png
+// Quando o arquivo estiver lá, descomente a linha abaixo e comente a de baixo:
+import jactoLogo from './assets/jacto-logo.png';
+// const jactoLogo: string | undefined = undefined; // ← remova esta linha ao adicionar o import
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ─────────────────────────────────────────────
 // CONFIGURAÇÕES — edite aqui sem mexer no resto
 // ─────────────────────────────────────────────
@@ -420,7 +428,7 @@ export default function App() {
             </p>
             <p>
               Cada dispositivo projetado é uma resposta direta a um gargalo produtivo.
-              Não entregamos apenas desenhos em 3D; entregamos redução de setup,
+              Não entregamos apenas projetos 3D; entregamos redução de setup,
               zero rejeição e retorno sobre investimento acelerado.
             </p>
             <p className="text-brand-accent font-bold">
@@ -482,13 +490,20 @@ export default function App() {
                 Expertise comprovada em redução de custos operacionais e ganhos de produtividade. Atuação por <span className="text-white font-bold">27 anos na Jacto Agrícola</span>, com foco em projetos de máquinas de alta complexidade e apoio direto à engenharia — sugerindo melhorias de usinabilidade, avaliando ferramentas especiais e garantindo que cada peça seja projetada para fixação eficiente desde o início.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1 p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center gap-1">
                   <span className="text-white font-bold text-2xl font-display tracking-tighter">27 ANOS</span>
                   <p className="text-[10px] uppercase tracking-widest">Experiência Industrial</p>
                 </div>
-                <div className="space-y-1 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <span className="text-white font-bold text-2xl font-display tracking-tighter">JACTO AGRÍCOLA</span>
-                  <p className="text-[10px] uppercase tracking-widest">27 Anos de Atuação</p>
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
+                  {jactoLogo ? (
+                    <img
+                      src={jactoLogo}
+                      alt="Jacto Agrícola"
+                      className="h-20 w-full object-contain brightness-0 invert opacity-90"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-2xl font-display tracking-tighter">JACTO AGRÍCOLA</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -677,7 +692,17 @@ export default function App() {
                 <p className="text-gray-300 leading-relaxed italic">"{t.quote}"</p>
                 <div className="pt-4 border-t border-white/10">
                   <p className="font-bold text-white">{t.name}</p>
-                  <p className="text-[10px] uppercase tracking-widest text-brand-muted">{t.role} · {t.company}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {jactoLogo && t.company === 'Jacto Agrícola' ? (
+                      <img
+                        src={jactoLogo}
+                        alt="Jacto Agrícola"
+                        className="h-6 object-contain brightness-0 invert opacity-50"
+                      />
+                    ) : (
+                      <p className="text-[10px] uppercase tracking-widest text-brand-muted">{t.role} · {t.company}</p>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -703,7 +728,7 @@ export default function App() {
               <div className="space-y-8">
                 {[
                   { step: '01', title: 'Diagnóstico Técnico',   desc: 'Análise profunda do seu gargalo produtivo e levantamento de requisitos técnicos.' },
-                  { step: '02', title: 'Projeto 3D & Simulação', desc: 'Desenvolvimento no SolidWorks com simulações de movimento e interferência.' },
+                  { step: '02', title: 'Projeto 3D & Simulação', desc: 'Desenvolvimento em programas de precisão 3D com simulações de movimento e interferência.' },
                   { step: '03', title: 'Fabricação & Ajuste',   desc: 'Acompanhamento rigoroso da fabricação para garantir tolerâncias e precisão.' },
                   { step: '04', title: 'Entrega & Homologação', desc: 'Instalação e testes em campo para garantir que o ROI planejado seja atingido.' },
                 ].map((item, i) => (
