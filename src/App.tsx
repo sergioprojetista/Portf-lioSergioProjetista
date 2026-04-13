@@ -280,29 +280,30 @@ const TestimonialsSection: React.FC<{ jactoLogo: string }> = ({ jactoLogo }) => 
 
         {/* ── Mobile carrossel (< md) ── */}
         <div className="md:hidden">
-          {/* Track arrastável */}
+          {/* Track arrastável — ocupa 100% da largura, sem vazamento */}
           <div
             ref={trackRef}
-            className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y select-none"
+            className="overflow-hidden cursor-grab active:cursor-grabbing select-none w-full"
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
           >
             <motion.div
               className="flex"
-              animate={{ x: `calc(-${active * 100}% - ${active * 16}px)` }}
+              animate={{ x: `${-active * 100}%` }}
               transition={{ type: 'spring', stiffness: 300, damping: 35 }}
             >
               {TESTIMONIALS.map((t, i) => (
                 <div
                   key={i}
-                  className="w-[calc(100vw-48px)] mx-3 shrink-0 bg-white/5 border border-white/10 rounded-3xl p-7 flex flex-col gap-5"
-                  style={{ minHeight: 'clamp(300px, 70vw, 420px)' }}
+                  className="w-full shrink-0 px-6"
                 >
-                  <Quote className="text-brand-accent shrink-0" size={28} />
-                  <p className="text-gray-300 leading-relaxed italic text-sm flex-1">"{t.quote}"</p>
-                  <div className="pt-4 border-t border-white/10">
-                    <p className="font-bold text-white text-sm">{t.name}</p>
-                    <p className="text-[10px] uppercase tracking-widest text-brand-muted mt-1">{t.role} · {t.company}</p>
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-7 flex flex-col gap-5 w-full">
+                    <Quote className="text-brand-accent shrink-0" size={28} />
+                    <p className="text-gray-300 leading-relaxed italic text-sm flex-1">"{t.quote}"</p>
+                    <div className="pt-4 border-t border-white/10">
+                      <p className="font-bold text-white text-sm">{t.name}</p>
+                      <p className="text-[10px] uppercase tracking-widest text-brand-muted mt-1">{t.role} · {t.company}</p>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -375,7 +376,7 @@ export default function App() {
   }, [menuAberto]);
 
   return (
-    <div className="relative industrial-grid">
+    <div className="relative industrial-grid overflow-x-hidden">
       {/* Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-brand-accent z-50 origin-left"
@@ -383,7 +384,7 @@ export default function App() {
       />
 
       {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#0a0a0a]/98 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
           {/* Logo */}
           <a href="#" aria-label="Voltar ao topo" className="flex items-center gap-3">
@@ -468,7 +469,7 @@ export default function App() {
         className="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-0 relative overflow-hidden"
       >
         <div className="absolute inset-0 z-0 opacity-20">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-accent/20 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(800px,100vw)] h-[min(800px,100vw)] bg-brand-accent/20 rounded-full blur-[120px]" />
         </div>
 
         <div className="relative z-10 space-y-6 max-w-4xl">
