@@ -120,7 +120,6 @@ export const PROJECTS: ProjectCase[] = [
 
 // ──────────────────────────────────────────────────────────────
 // TESTIMONIALS
-// SUBSTITUIR: troque pelos depoimentos reais dos clientes.
 // ──────────────────────────────────────────────────────────────
 
 export interface Testimonial {
@@ -132,21 +131,27 @@ export interface Testimonial {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    quote: 'SUBSTITUIR — Ex: "O dispositivo entregue reduziu nosso tempo de setup em mais de 80%. Resultado acima do esperado e dentro do prazo acordado."',
-    name: 'SUBSTITUIR — Nome do Contato',
-    role: 'SUBSTITUIR — Cargo (ex: Gerente de Manufatura)',
-    company: 'Jacto Agrícola',
+    quote: 'Estamos recebendo do Sr. Sergio já há vários anos um serviço de projetos mecânicos e assessoria técnica de excelente qualidade, com compromisso, profissionalismo e responsabilidade no prazo de entrega e atendimento pós-venda. Estamos muito contentes com o empenho e o serviço prestado em todos esses anos de parceria. Excelente como pessoa também — recomendamos seus serviços a todos que procuram um bom profissional do ramo.',
+    name: 'Mathias & Viana Mecânica Ltda',
+    role: 'Parceiro de Longa Data',
+    company: 'Usifer Marília',
   },
   {
-    quote: 'SUBSTITUIR — Ex: "Sergio entendeu o problema na primeira reunião e entregou uma solução que não precisamos alterar. Zero rejeição desde a implantação."',
-    name: 'SUBSTITUIR — Nome do Contato',
-    role: 'SUBSTITUIR — Cargo (ex: Engenheiro de Processos)',
-    company: 'Jacto Agrícola',
+    quote: 'Um parceiro estratégico que alia experiência, confiabilidade e qualidade nas entregas de projetos de dispositivos de usinagem, contribuindo de forma consistente desde a fase de estudos até a execução final.',
+    name: 'Equipe Técnica',
+    role: 'Parceria Estratégica',
+    company: 'Unipc Jacto — SJS Projetos',
   },
   {
-    quote: 'SUBSTITUIR — Ex: "A qualidade técnica dos projetos e o suporte pós-entrega diferenciam o Sergio de qualquer outro fornecedor que já trabalhamos."',
-    name: 'SUBSTITUIR — Nome do Contato',
-    role: 'SUBSTITUIR — Cargo (ex: Diretor Industrial)',
-    company: 'SUBSTITUIR — Empresa',
+    quote: 'Sérgio desenvolveu competências relevantes no desenvolvimento de dispositivos e na otimização de processos, desempenhando um papel essencial para o sucesso dessa parceria. Sua sólida experiência, adquirida ao longo de sua atuação na Jacto, foi fundamental para o sucesso dos nossos produtos.',
+    name: 'Ferramentas Ubra Ltda.',
+    role: 'Fornecedor de Soluções em Fixação',
+    company: 'Urba Ltda',
+  },
+  {
+    quote: 'Seu grande conhecimento técnico, aliado ao compromisso e dedicação aos prazos e requisitos, são fatores diferenciais de seu trabalho. Os estudos para orçamento e o acompanhamento pós-venda também são importantes serviços que o Sérgio nos presta. Recomendamos fortemente seu trabalho — é um excelente profissional e pessoa.',
+    name: 'Equipe MCV',
+    role: 'Parceiro em Projetos Mecânicos',
+    company: 'MCV',
   },
 ];

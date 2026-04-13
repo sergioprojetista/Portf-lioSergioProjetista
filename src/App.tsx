@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import {
   Settings,
@@ -74,7 +74,7 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.6, delay: index * 0.05 }}
-      className="flex flex-col lg:flex-row bg-[#080808] border-b border-white/[0.05]"
+      className="flex flex-col lg:flex-row bg-[#080808] border-b border-white/5"
     >
       {/* ── FOTO ── */}
       <div className="relative w-full lg:w-[40%] shrink-0 bg-[#050505] overflow-hidden"
@@ -85,10 +85,10 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
           className="w-full h-full object-contain p-6 md:p-8 lg:p-10"
         />
         {/* gradiente direita */}
-        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-r from-transparent to-[#080808] hidden lg:block" />
+        <div className="absolute inset-y-0 right-0 w-16 bg-linear-to-r from-transparent to-[#080808] hidden lg:block" />
         {/* número watermark */}
         <div className="absolute bottom-0 left-2 pointer-events-none select-none overflow-hidden leading-none">
-          <span className="font-display font-black text-white/[0.04]"
+          <span className="font-display font-black text-white/4"
             style={{ fontSize: 'clamp(80px, 14vw, 200px)', lineHeight: 0.85 }}>
             {project.id}
           </span>
@@ -121,7 +121,7 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
           </p>
         </div>
 
-        <div className="w-full h-[1px] bg-white/[0.06]" />
+        <div className="w-full h-px bg-white/6" />
 
         {/* Desafio */}
         <div className="space-y-2">
@@ -161,8 +161,8 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
           </div>
           <div className="space-y-2">
             {project.results.map((result, i) => (
-              <div key={i} className="flex items-start gap-4 p-3.5 border border-white/[0.05] rounded-xl bg-white/[0.02] hover:border-brand-accent/20 transition-colors duration-300">
-                <span className="text-brand-accent font-mono font-black text-xl leading-none flex-shrink-0 mt-0.5">
+              <div key={i} className="flex items-start gap-4 p-3.5 border border-white/5 rounded-xl bg-white/2 hover:border-brand-accent/20 transition-colors duration-300">
+                <span className="text-brand-accent font-mono font-black text-xl leading-none shrink-0 mt-0.5">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <p className="text-base sm:text-lg font-bold text-white leading-snug">{result}</p>
@@ -174,15 +174,15 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
         {/* Specs rápidas + CTA */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
           <div className="flex gap-4">
-            <div className="p-3 border border-white/[0.06] rounded-xl bg-white/[0.02] text-center min-w-[80px]">
+            <div className="p-3 border border-white/6 rounded-xl bg-white/2 text-center min-w-[80px]">
               <p className="text-[8px] uppercase tracking-widest text-white/25 font-bold mb-1">Tolerância</p>
               <p className="text-xs font-bold text-white font-mono leading-tight">{project.technicalSpecs.tolerances}</p>
             </div>
-            <div className="p-3 border border-white/[0.06] rounded-xl bg-white/[0.02] text-center min-w-[80px]">
+            <div className="p-3 border border-white/6 rounded-xl bg-white/2 text-center min-w-[80px]">
               <p className="text-[8px] uppercase tracking-widest text-white/25 font-bold mb-1">Peças</p>
               <p className="text-lg font-bold text-white">{project.technicalSpecs.partCount}</p>
             </div>
-            <div className="p-3 border border-white/[0.06] rounded-xl bg-white/[0.02] text-center min-w-[80px]">
+            <div className="p-3 border border-white/6 rounded-xl bg-white/2 text-center min-w-[80px]">
               <p className="text-[8px] uppercase tracking-widest text-white/25 font-bold mb-1">Prazo</p>
               <p className="text-xs font-bold text-white leading-tight">{project.executionTime}</p>
             </div>
@@ -203,7 +203,7 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
           {project.tags.map(tag => (
-            <span key={tag} className="px-2.5 py-1 border border-white/[0.07] rounded-full text-[8px] uppercase tracking-widest text-white/30 font-bold">
+            <span key={tag} className="px-2.5 py-1 border border-white/7 rounded-full text-[8px] uppercase tracking-widest text-white/30 font-bold">
               {tag}
             </span>
           ))}
@@ -211,6 +211,147 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
 
       </div>
     </motion.div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────
+// TestimonialsSection — carrossel arrastável (mobile) + grid (desktop)
+// ─────────────────────────────────────────────────────────────
+const TestimonialsSection: React.FC<{ jactoLogo: string }> = ({ jactoLogo }) => {
+  const [active, setActive] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const total = TESTIMONIALS.length;
+
+  const goTo = (idx: number) => {
+    const clamped = Math.max(0, Math.min(total - 1, idx));
+    setActive(clamped);
+  };
+
+  // Touch / mouse drag
+  const onPointerDown = (e: React.PointerEvent) => {
+    isDraggingRef.current = true;
+    startXRef.current = e.clientX;
+    trackRef.current?.setPointerCapture(e.pointerId);
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    const diff = startXRef.current - e.clientX;
+    if (diff > 40) goTo(active + 1);
+    else if (diff < -40) goTo(active - 1);
+  };
+
+  return (
+    <section className="py-20 md:py-32 px-0 md:px-20 bg-[#0f0f0f] border-y border-white/5">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 md:mb-16 space-y-4 px-6">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter leading-none">
+            O QUE DIZEM <br />
+            <span className="text-brand-accent">OS CLIENTES.</span>
+          </h2>
+          <p className="text-brand-muted font-bold uppercase tracking-widest text-xs">
+            Resultados comprovados por quem confia no trabalho
+          </p>
+        </div>
+
+        {/* ── Desktop grid (md+) ── */}
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {TESTIMONIALS.map((t, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12 }}
+              className="bg-white/5 border border-white/10 rounded-3xl p-7 flex flex-col gap-5 hover:border-brand-accent/30 transition-all"
+            >
+              <Quote className="text-brand-accent shrink-0" size={28} />
+              <p className="text-gray-300 leading-relaxed italic text-sm flex-1">"{t.quote}"</p>
+              <div className="pt-4 border-t border-white/10">
+                <p className="font-bold text-white text-sm">{t.name}</p>
+                <p className="text-[10px] uppercase tracking-widest text-brand-muted mt-1">{t.role} · {t.company}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ── Mobile carrossel (< md) ── */}
+        <div className="md:hidden">
+          {/* Track arrastável */}
+          <div
+            ref={trackRef}
+            className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y select-none"
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+          >
+            <motion.div
+              className="flex"
+              animate={{ x: `calc(-${active * 100}% - ${active * 16}px)` }}
+              transition={{ type: 'spring', stiffness: 300, damping: 35 }}
+            >
+              {TESTIMONIALS.map((t, i) => (
+                <div
+                  key={i}
+                  className="w-[calc(100vw-48px)] mx-3 shrink-0 bg-white/5 border border-white/10 rounded-3xl p-7 flex flex-col gap-5"
+                  style={{ minHeight: 'clamp(300px, 70vw, 420px)' }}
+                >
+                  <Quote className="text-brand-accent shrink-0" size={28} />
+                  <p className="text-gray-300 leading-relaxed italic text-sm flex-1">"{t.quote}"</p>
+                  <div className="pt-4 border-t border-white/10">
+                    <p className="font-bold text-white text-sm">{t.name}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-brand-muted mt-1">{t.role} · {t.company}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Dots + setas */}
+          <div className="flex items-center justify-center gap-4 mt-8 px-6">
+            <button
+              onClick={() => goTo(active - 1)}
+              disabled={active === 0}
+              className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white disabled:opacity-20 hover:border-brand-accent hover:text-brand-accent transition-all"
+              aria-label="Anterior"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+
+            <div className="flex gap-2">
+              {TESTIMONIALS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  aria-label={`Ir para depoimento ${i + 1}`}
+                  className={`transition-all duration-300 rounded-full ${
+                    i === active
+                      ? 'w-6 h-2 bg-brand-accent'
+                      : 'w-2 h-2 bg-white/20 hover:bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => goTo(active + 1)}
+              disabled={active === total - 1}
+              className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white disabled:opacity-20 hover:border-brand-accent hover:text-brand-accent transition-all"
+              aria-label="Próximo"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+
+          {/* Contador */}
+          <p className="text-center text-[10px] font-mono text-white/25 uppercase tracking-widest mt-3">
+            {active + 1} / {total}
+          </p>
+        </div>
+      </div>
+    </section>
   );
 };
 
@@ -390,8 +531,8 @@ export default function App() {
       </motion.header>
 
       {/* ── Stats / Números de impacto ── */}
-      <section className="py-20 px-6 md:px-20 bg-[#0f0f0f] border-y border-white/5">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="py-16 md:py-20 px-6 md:px-20 bg-[#0f0f0f] border-y border-white/5">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
           {[
             { value: '27+',  label: 'Anos de Experiência' },
             { value: '50+',  label: 'Dispositivos Entregues' },
@@ -414,8 +555,8 @@ export default function App() {
       </section>
 
       {/* ── Intro Storytelling ── */}
-      <section className="py-32 px-6 md:px-20 bg-white text-black">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      <section className="py-20 md:py-32 px-6 md:px-20 bg-white text-black">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-bold leading-none tracking-tighter">
               POR QUE O <br />
@@ -441,7 +582,7 @@ export default function App() {
       </section>
 
       {/* ── Sobre o Sergio ── */}
-      <section id="sergio" className="py-32 px-6 md:px-20 bg-[#0f0f0f] border-y border-white/5 relative overflow-hidden">
+      <section id="sergio" className="py-20 md:py-32 px-6 md:px-20 bg-[#0f0f0f] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -449,7 +590,7 @@ export default function App() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 relative group">
+            <div className="aspect-4/5 rounded-3xl overflow-hidden border border-white/10 relative group">
               {/*
                * SUBSTITUIR: troque o src pela foto real do Sergio.
                * Coloque a imagem em src/assets/sergio-foto.jpg e importe no topo:
@@ -461,7 +602,7 @@ export default function App() {
                   [ SUBSTITUIR: foto do Sergio ]
                 </p>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8">
                 <p className="text-brand-accent font-mono text-sm uppercase tracking-widest mb-1">Especialista em Projetos</p>
                 <h3 className="text-4xl font-bold font-display">SERGIO</h3>
@@ -533,7 +674,7 @@ export default function App() {
       </section>
 
       {/* ── Serviços / Expertise ── */}
-      <section id="expertise" className="py-32 px-6 md:px-20 bg-white text-black">
+      <section id="expertise" className="py-20 md:py-32 px-6 md:px-20 bg-white text-black">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
             <div className="space-y-4">
@@ -628,15 +769,15 @@ export default function App() {
       {/* ── Cases ── */}
       <div id="cases" className="bg-[#0a0a0a]">
         {/* Header da seção de cases */}
-        <div className="py-28 md:py-36 px-6 md:px-20 border-b border-white/[0.04] text-center relative overflow-hidden">
+        <div className="py-28 md:py-36 px-6 md:px-20 border-b border-white/4 text-center relative overflow-hidden">
           {/* Grade de fundo sutil */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          <div className="absolute inset-0 opacity-3 pointer-events-none"
             style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
           <div className="max-w-4xl mx-auto space-y-6 relative z-10">
             <span className="inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.4em] text-brand-accent font-mono">
-              <div className="w-8 h-[1px] bg-brand-accent" />
+              <div className="w-8 h-px bg-brand-accent" />
               Portfólio de Engenharia
-              <div className="w-8 h-[1px] bg-brand-accent" />
+              <div className="w-8 h-px bg-brand-accent" />
             </span>
             <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none">
               CASES DE <span className="text-brand-accent">SUCESSO.</span>
@@ -644,17 +785,17 @@ export default function App() {
             <p className="text-white/50 text-base md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
               Cada case é um problema industrial real — com desafio técnico, solução de engenharia precisa e impacto direto no ROI do cliente.
             </p>
-            <div className="flex items-center justify-center gap-8 pt-4">
+            <div className="flex items-center justify-center gap-4 sm:gap-8 pt-4 flex-wrap">
               <div className="text-center">
                 <p className="text-3xl font-bold text-brand-accent font-display tracking-tighter">4</p>
                 <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mt-1">Cases documentados</p>
               </div>
-              <div className="w-[1px] h-10 bg-white/10" />
+              <div className="w-px h-10 bg-white/10" />
               <div className="text-center">
                 <p className="text-3xl font-bold text-brand-accent font-display tracking-tighter">27</p>
                 <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mt-1">Anos de experiência</p>
               </div>
-              <div className="w-[1px] h-10 bg-white/10" />
+              <div className="w-px h-10 bg-white/10" />
               <div className="text-center">
                 <p className="text-3xl font-bold text-brand-accent font-display tracking-tighter">100%</p>
                 <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mt-1">Conformidade NR-12</p>
@@ -668,52 +809,10 @@ export default function App() {
       </div>
 
       {/* ── Depoimentos ── */}
-      <section className="py-32 px-6 md:px-20 bg-[#0f0f0f] border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter leading-none">
-              O QUE DIZEM <br />
-              <span className="text-brand-accent">OS CLIENTES.</span>
-            </h2>
-            <p className="text-brand-muted font-bold uppercase tracking-widest text-xs">
-              Resultados comprovados por quem confia no trabalho
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 hover:border-brand-accent/30 transition-all"
-              >
-                <Quote className="text-brand-accent" size={32} />
-                <p className="text-gray-300 leading-relaxed italic">"{t.quote}"</p>
-                <div className="pt-4 border-t border-white/10">
-                  <p className="font-bold text-white">{t.name}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    {jactoLogo && t.company === 'Jacto Agrícola' ? (
-                      <img
-                        src={jactoLogo}
-                        alt="Jacto Agrícola"
-                        className="h-6 object-contain brightness-0 invert opacity-50"
-                      />
-                    ) : (
-                      <p className="text-[10px] uppercase tracking-widest text-brand-muted">{t.role} · {t.company}</p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection jactoLogo={jactoLogo} />
 
       {/* ── Processo / Caminho ── */}
-      <section className="py-32 px-6 md:px-20 bg-white text-black overflow-hidden">
+      <section className="py-20 md:py-32 px-6 md:px-20 bg-white text-black overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-10">
@@ -789,7 +888,7 @@ export default function App() {
       </section>
 
       {/* ── CTA / Contato ── */}
-      <section id="contact" className="py-32 px-6 md:px-20 bg-brand-accent text-black text-center">
+      <section id="contact" className="py-20 md:py-32 px-6 md:px-20 bg-brand-accent text-black text-center">
         <div className="max-w-4xl mx-auto space-y-12">
           <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-none">
             PRONTO PARA <br />
