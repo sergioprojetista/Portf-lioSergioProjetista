@@ -40,13 +40,12 @@ import logoS from './assets/favicon.png';
 // ─────────────────────────────────────────────
 const CONFIG = {
   // SUBSTITUIR: seu número com DDI+DDD, sem espaços ou traços
-  whatsappNumber: '5518999999999',
+  whatsappNumber: '5514997651512',
   whatsappMessage: 'Olá Sergio, gostaria de solicitar um orçamento para um projeto.',
   // SUBSTITUIR: seu email profissional
-  email: 'sergio@seudominio.com.br',
-  // SUBSTITUIR: seus links sociais reais (ou deixe '' para sumir do footer)
-  linkedin: 'https://linkedin.com/in/SEUPERFIL',
-  instagram: 'https://instagram.com/SEUPERFIL',
+  email: 'sergioprojetos76@outlook.com',
+  linkedin: '',
+  instagram: '',
   // SUBSTITUIR: quando tiver o PDF, coloque em public/portfolio-sergio.pdf e mude para true
   pdfDisponivel: false,
   pdfPath: '/portfolio-sergio.pdf',
@@ -659,17 +658,7 @@ export default function App() {
               </p>
             </div>
 
-            {/* LinkedIn do Sergio */}
-            {CONFIG.linkedin && (
-              <a
-                href={CONFIG.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-[10px] uppercase tracking-widest font-bold text-white hover:border-brand-accent hover:text-brand-accent transition-all"
-              >
-                Ver perfil no LinkedIn <ArrowRight size={14} />
-              </a>
-            )}
+
           </motion.div>
         </div>
       </section>
@@ -947,29 +936,30 @@ export default function App() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-12 px-6 md:px-20 bg-[#0a0a0a] border-t border-white/5 text-brand-muted text-[10px] uppercase tracking-[0.3em] font-bold">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div>© 2026 SERGIO — ENGENHARIA INDUSTRIAL DE PRECISÃO</div>
+      <footer className="py-10 px-6 md:px-20 bg-[#0a0a0a] border-t border-white/5 text-brand-muted font-bold">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-4 text-center">
 
-          <div className="flex gap-8">
-            {CONFIG.linkedin && (
-              <motion.a whileHover={{ scale: 1.1, color: 'white' }} href={CONFIG.linkedin} target="_blank" rel="noopener noreferrer" className="transition-colors">
-                LinkedIn
-              </motion.a>
-            )}
-            {CONFIG.instagram && (
-              <motion.a whileHover={{ scale: 1.1, color: 'white' }} href={CONFIG.instagram} target="_blank" rel="noopener noreferrer" className="transition-colors">
-                Instagram
-              </motion.a>
-            )}
-            {CONFIG.email && (
-              <motion.a whileHover={{ scale: 1.1, color: 'white' }} href={`mailto:${CONFIG.email}`} className="transition-colors">
-                {CONFIG.email}
-              </motion.a>
-            )}
+          {/* Copyright */}
+          <div className="text-[9px] uppercase tracking-[0.2em] leading-relaxed">
+            © 2026 SERGIO — ENGENHARIA INDUSTRIAL DE PRECISÃO
           </div>
 
-          <div>ENGENHARIA QUE IMPULSIONA RESULTADOS</div>
+          {/* Email */}
+          {CONFIG.email && (
+            <motion.a
+              whileHover={{ scale: 1.05, color: 'white' }}
+              href={`mailto:${CONFIG.email}`}
+              className="transition-colors text-[9px] tracking-wide"
+            >
+              {CONFIG.email}
+            </motion.a>
+          )}
+
+          {/* Tagline */}
+          <div className="text-[8px] uppercase tracking-[0.22em] opacity-70 mt-2">
+            ENGENHARIA QUE IMPULSIONA RESULTADOS
+          </div>
+
         </div>
       </footer>
     </div>
