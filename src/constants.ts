@@ -33,7 +33,7 @@ export const PROJECTS: ProjectCase[] = [
     title: 'Dispositivo de Usinagem — Corpo de Bomba Hidráulica',
     client: 'Jacto Agrícola',
     segment: 'Jacto Agrícola | Líder Nacional em Máquinas Agrícolas',
-    challenge: 'Componente hidráulico com 6 faces de fixação distintas e geometria complexa. Sem gabarito dedicado, a linha registrava 8% de rejeição e setup elevado por operador.',
+    challenge: 'Componente hidráulico com 6 faces de fixação distintas e geometria complexa.',
     solution: 'Dispositivo completo com estrutura em portal, fixações mecânicas simultâneas, posicionadores cônicos e placa-base modular. Projetado com programas de precisão 3D com simulação de interferência e folgas de usinagem. 42 componentes integrados, todos em conformidade NR-12.',
     technicalSpecs: {
       software: ['Projetado em Software 3D de Precisão'],
@@ -55,7 +55,7 @@ export const PROJECTS: ProjectCase[] = [
     title: 'Fixture para Eixo de Suspensão — Máquina Agrícola',
     client: 'Jacto Agrícola',
     segment: 'Jacto Agrícola | Líder Nacional em Máquinas Agrícolas',
-    challenge: 'Eixo de grande porte com furos e roscas em múltiplos planos. A geometria original dificultava a fixação — foi necessário apoiar a engenharia na revisão do projeto da peça antes de desenvolver o dispositivo.',
+    challenge: 'Eixo de grande porte com furos e roscas em múltiplos planos.',
     solution: 'Após análise da usinabilidade da peça e sugestão de ajustes no projeto original, foi desenvolvido dispositivo com apoios V-blocks, prismáticos e clamps laterais — garantindo estabilidade e repetibilidade em operações multi-eixo.',
     technicalSpecs: {
       software: ['Projetado em Software 3D de Precisão'],
@@ -77,7 +77,7 @@ export const PROJECTS: ProjectCase[] = [
     title: 'Suporte de Roda — Dispositivo de Usinagem',
     client: 'Jacto Agrícola',
     segment: 'Jacto Agrícola | Líder Nacional em Máquinas Agrícolas',
-    challenge: 'Geometria complexa sem áreas de fixação adequadas no projeto original. Foi necessário intervir na fase de desenvolvimento da peça para garantir superfícies de apoio antes de projetar o dispositivo.',
+    challenge: 'Geometria complexa sem áreas de fixação adequadas no projeto original.',
     solution: 'Com sugestões de alto-relevo e ajuste de tolerâncias aplicadas na peça, foi possível projetar dispositivo com múltiplos clamps e estrutura em L de alta rigidez — eliminando vibração em corte pesado.',
     technicalSpecs: {
       software: ['Projetado em Software 3D de Precisão'],
