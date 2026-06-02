@@ -32,6 +32,7 @@ import { cn } from './lib/utils';
 import jactoLogo from './assets/jacto-logo.png';
 import logoSergio from './assets/logo-sergio.png';
 import logoS from './assets/favicon.png';
+import sergioFoto from './assets/sergio-foto.jpg';
 // const jactoLogo: string | undefined = undefined; // ← remova esta linha ao adicionar o import
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -591,17 +592,11 @@ export default function App() {
             className="relative"
           >
             <div className="aspect-4/5 rounded-3xl overflow-hidden border border-white/10 relative group">
-              {/*
-               * SUBSTITUIR: troque o src pela foto real do Sergio.
-               * Coloque a imagem em src/assets/sergio-foto.jpg e importe no topo:
-               * import sergioFoto from './assets/sergio-foto.jpg';
-               * Depois use src={sergioFoto} aqui.
-               */}
-              <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                <p className="text-brand-muted text-sm uppercase tracking-widest text-center px-8">
-                  [ SUBSTITUIR: foto do Sergio ]
-                </p>
-              </div>
+              <img
+                src={sergioFoto}
+                alt="Sergio"
+                className="w-full h-full object-cover object-top"
+              />
               <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8">
                 <p className="text-brand-accent font-mono text-sm uppercase tracking-widest mb-1">Especialista em Projetos</p>
