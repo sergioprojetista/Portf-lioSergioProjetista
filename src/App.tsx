@@ -32,7 +32,7 @@ import { cn } from './lib/utils';
 import jactoLogo from './assets/jacto-logo.png';
 import logoSergio from './assets/logo-sergio.png';
 import logoS from './assets/favicon.png';
-import sergioFoto from './assets/sergio-foto.jpg';
+import sergioFoto from './assets/sergio-foto.png';
 // const jactoLogo: string | undefined = undefined; // ← remova esta linha ao adicionar o import
 // ─────────────────────────────────────────────────────────────────────────────
 
