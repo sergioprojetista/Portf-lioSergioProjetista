@@ -78,7 +78,7 @@ function dispararLeadGoogleAds() {
 // ─────────────────────────────────────────────────────────────────────────────
 const EMAILJS = {
   serviceId:  'service_jlifenn',
-  templateId: 'p3be4jd',
+  templateId: 'template_p3be4jd',
   publicKey:  'hlfkQo5wDplHH45e8',
   privateKey: 'rv0MAb69JgrIe2A7T8nwg',
 };
