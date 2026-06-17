@@ -21,6 +21,10 @@ import {
   X,
   Quote,
   Mail,
+  Send,
+  User,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 import { PROJECTS, TESTIMONIALS, ProjectCase } from './constants';
 import { cn } from './lib/utils';
@@ -53,6 +57,268 @@ const CONFIG = {
 };
 
 const whatsappHref = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(CONFIG.whatsappMessage)}`;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tipagem para o gtag do Google Ads (evita erro de TypeScript)
+// ─────────────────────────────────────────────────────────────────────────────
+declare function gtag(...args: unknown[]): void;
+
+function dispararLeadGoogleAds() {
+  try {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'generate_lead');
+    }
+  } catch (e) {
+    // gtag não carregado (ambiente de dev); silencia o erro
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Modal de Contato por Email
+// ─────────────────────────────────────────────────────────────────────────────
+interface ContactModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+  const [nome, setNome] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [email, setEmail] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [erro, setErro] = useState('');
+
+  // Fecha ao pressionar ESC
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    if (isOpen) window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
+  // Trava scroll do body enquanto modal está aberto
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  const formatarCPF = (valor: string) => {
+    const nums = valor.replace(/\D/g, '').slice(0, 11);
+    return nums
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  };
+
+  const handleCPF = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCpf(formatarCPF(e.target.value));
+  };
+
+  const handleEnviar = () => {
+    setErro('');
+    if (!nome.trim() || !email.trim() || !mensagem.trim()) {
+      setErro('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErro('Digite um e-mail válido.');
+      return;
+    }
+
+    setEnviando(true);
+
+    // ── Monta o corpo do email ──
+    const assunto = encodeURIComponent(`Novo contato de ${nome} — SergioEng`);
+    const corpo = encodeURIComponent(
+      `Nome: ${nome}\nCPF: ${cpf || 'Não informado'}\nEmail: ${email}\n\nMensagem:\n${mensagem}`
+    );
+    const mailtoLink = `mailto:${CONFIG.email}?subject=${assunto}&body=${corpo}`;
+
+    // ── Dispara evento de lead no Google Ads ──
+    dispararLeadGoogleAds();
+
+    // ── Abre o cliente de email do usuário ──
+    window.location.href = mailtoLink;
+
+    // Pequeno delay para dar feedback visual antes de fechar
+    setTimeout(() => {
+      setEnviando(false);
+      setEnviado(true);
+    }, 800);
+  };
+
+  const handleFechar = () => {
+    setNome(''); setCpf(''); setEmail(''); setMensagem('');
+    setEnviado(false); setErro('');
+    onClose();
+  };
+
+  const inputClass =
+    'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent/30 transition-all';
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleFechar}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
+          />
+
+          {/* Modal */}
+          <motion.div
+            key="modal"
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 30 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+          >
+            <div
+              className="pointer-events-auto w-full max-w-lg bg-[#111111] border border-white/10 rounded-3xl p-8 shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Fechar */}
+              <button
+                onClick={handleFechar}
+                className="absolute top-5 right-5 text-white/40 hover:text-white transition-colors"
+                aria-label="Fechar"
+              >
+                <X size={20} />
+              </button>
+
+              {!enviado ? (
+                <>
+                  {/* Header */}
+                  <div className="mb-6 space-y-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center text-black">
+                        <Mail size={14} />
+                      </div>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-[0.35em] text-brand-accent">
+                        Enviar Mensagem
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-bold tracking-tighter text-white">
+                      Entre em contato
+                    </h3>
+                    <p className="text-sm text-white/40">
+                      Preencha os dados abaixo e seu cliente de email será aberto com tudo pronto para enviar.
+                    </p>
+                  </div>
+
+                  {/* Campos */}
+                  <div className="space-y-3">
+                    {/* Nome */}
+                    <div className="relative">
+                      <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                      <input
+                        type="text"
+                        placeholder="Nome completo *"
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        className={`${inputClass} pl-9`}
+                      />
+                    </div>
+
+                    {/* CPF */}
+                    <div className="relative">
+                      <FileText size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                      <input
+                        type="text"
+                        placeholder="CPF (opcional)"
+                        value={cpf}
+                        onChange={handleCPF}
+                        className={`${inputClass} pl-9`}
+                        inputMode="numeric"
+                      />
+                    </div>
+
+                    {/* Email */}
+                    <div className="relative">
+                      <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                      <input
+                        type="email"
+                        placeholder="Seu e-mail *"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className={`${inputClass} pl-9`}
+                      />
+                    </div>
+
+                    {/* Mensagem */}
+                    <textarea
+                      placeholder="Descreva seu projeto ou dúvida... *"
+                      value={mensagem}
+                      onChange={(e) => setMensagem(e.target.value)}
+                      rows={4}
+                      className={`${inputClass} resize-none`}
+                    />
+                  </div>
+
+                  {/* Erro */}
+                  {erro && (
+                    <p className="mt-3 text-xs text-red-400 font-medium">{erro}</p>
+                  )}
+
+                  {/* Botão enviar */}
+                  <motion.button
+                    onClick={handleEnviar}
+                    disabled={enviando}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="mt-5 w-full flex items-center justify-center gap-2 bg-brand-accent text-black px-6 py-4 rounded-xl font-bold uppercase text-xs tracking-widest transition-all disabled:opacity-60"
+                  >
+                    {enviando ? (
+                      <><Loader2 size={16} className="animate-spin" /> Abrindo email...</>
+                    ) : (
+                      <><Send size={16} /> Enviar Mensagem</>
+                    )}
+                  </motion.button>
+
+                  <p className="mt-3 text-[10px] text-white/20 text-center">
+                    Seu cliente de email (Outlook, Gmail, etc.) será aberto com os dados preenchidos.
+                  </p>
+                </>
+              ) : (
+                /* Estado de sucesso */
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="py-8 flex flex-col items-center text-center gap-5"
+                >
+                  <div className="w-16 h-16 rounded-full bg-brand-accent flex items-center justify-center text-black">
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-bold text-white">Email pronto para enviar!</h3>
+                    <p className="text-sm text-white/50 max-w-xs">
+                      Seu cliente de email foi aberto com as informações preenchidas. Confira e clique em enviar.
+                    </p>
+                  </div>
+                  <motion.button
+                    onClick={handleFechar}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="mt-2 bg-white/10 text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-white/15 transition-all"
+                  >
+                    Fechar
+                  </motion.button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
 
 
 
@@ -365,6 +631,7 @@ export default function App() {
   const heroScale   = useTransform(scrollYProgress, [0, 0.05], [1, 0.9]);
 
   const [menuAberto, setMenuAberto] = useState(false);
+  const [modalContato, setModalContato] = useState(false);
 
   // Fecha o menu ao clicar em um link
   const fecharMenu = () => setMenuAberto(false);
@@ -377,6 +644,8 @@ export default function App() {
 
   return (
     <div className="relative industrial-grid overflow-x-hidden">
+      {/* Modal de Contato */}
+      <ContactModal isOpen={modalContato} onClose={() => setModalContato(false)} />
       {/* Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-brand-accent z-50 origin-left"
@@ -888,6 +1157,7 @@ export default function App() {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => dispararLeadGoogleAds()}
               whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0,0,0,0.2)' }}
               whileTap={{ scale: 0.95 }}
               className="bg-black text-white px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-transform flex items-center gap-3"
@@ -895,26 +1165,14 @@ export default function App() {
               <MessageSquare size={20} /> Falar no WhatsApp
             </motion.a>
 
-            {CONFIG.pdfDisponivel ? (
-              <motion.a
-                href={CONFIG.pdfPath}
-                download
-                whileHover={{ scale: 1.05, backgroundColor: '#000000', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-transparent border-2 border-black text-black px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-all"
-              >
-                Baixar Portfólio PDF
-              </motion.a>
-            ) : (
-              <motion.a
-                href={`mailto:${CONFIG.email}?subject=Solicita%C3%A7%C3%A3o%20de%20Or%C3%A7amento`}
-                whileHover={{ scale: 1.05, backgroundColor: '#000000', color: '#ffffff' }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-transparent border-2 border-black text-black px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-all flex items-center gap-3"
-              >
-                <Mail size={20} /> Enviar por Email
-              </motion.a>
-            )}
+            <motion.button
+              onClick={() => setModalContato(true)}
+              whileHover={{ scale: 1.05, backgroundColor: '#000000', color: '#ffffff' }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-transparent border-2 border-black text-black px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-all flex items-center gap-3"
+            >
+              <Mail size={20} /> Enviar por Email
+            </motion.button>
           </div>
           <div className="pt-12 border-t border-black/10 flex flex-wrap justify-center gap-12 opacity-60">
             <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-widest">
