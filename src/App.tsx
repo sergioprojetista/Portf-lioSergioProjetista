@@ -74,7 +74,16 @@ function dispararLeadGoogleAds() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Modal de Contato por Email
+// Configurações do EmailJS
+// ─────────────────────────────────────────────────────────────────────────────
+const EMAILJS = {
+  serviceId:  'service_jlifenn',
+  templateId: 'p3be4jd',
+  publicKey:  'hlfkQo5wDplHH45e8',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Modal de Contato — envia via EmailJS (sem abrir cliente de email)
 // ─────────────────────────────────────────────────────────────────────────────
 interface ContactModalProps {
   isOpen: boolean;
@@ -115,7 +124,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
     setCpf(formatarCPF(e.target.value));
   };
 
-  const handleEnviar = () => {
+  const handleEnviar = async () => {
     setErro('');
     if (!nome.trim() || !email.trim() || !mensagem.trim()) {
       setErro('Por favor, preencha todos os campos obrigatórios.');
@@ -128,24 +137,35 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
     setEnviando(true);
 
-    // ── Monta o corpo do email ──
-    const assunto = encodeURIComponent(`Novo contato de ${nome} — SergioEng`);
-    const corpo = encodeURIComponent(
-      `Nome: ${nome}\nCPF: ${cpf || 'Não informado'}\nEmail: ${email}\n\nMensagem:\n${mensagem}`
-    );
-    const mailtoLink = `mailto:${CONFIG.email}?subject=${assunto}&body=${corpo}`;
+    try {
+      // ── Envia via EmailJS API diretamente (sem instalar pacote) ──
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id:  EMAILJS.serviceId,
+          template_id: EMAILJS.templateId,
+          user_id:     EMAILJS.publicKey,
+          template_params: {
+            nome,
+            cpf:        cpf || 'Não informado',
+            email_lead: email,
+            mensagem,
+          },
+        }),
+      });
 
-    // ── Dispara evento de lead no Google Ads ──
-    dispararLeadGoogleAds();
+      if (!res.ok) throw new Error('Falha no envio');
 
-    // ── Abre o cliente de email do usuário ──
-    window.location.href = mailtoLink;
+      // ── Só dispara o lead depois que o email foi confirmado ──
+      dispararLeadGoogleAds();
 
-    // Pequeno delay para dar feedback visual antes de fechar
-    setTimeout(() => {
-      setEnviando(false);
       setEnviado(true);
-    }, 800);
+    } catch {
+      setErro('Erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const handleFechar = () => {
@@ -209,13 +229,12 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       Entre em contato
                     </h3>
                     <p className="text-sm text-white/40">
-                      Preencha os dados abaixo e seu cliente de email será aberto com tudo pronto para enviar.
+                      Preencha os dados e enviaremos sua mensagem diretamente para o Sergio.
                     </p>
                   </div>
 
                   {/* Campos */}
                   <div className="space-y-3">
-                    {/* Nome */}
                     <div className="relative">
                       <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
                       <input
@@ -227,7 +246,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
 
-                    {/* CPF */}
                     <div className="relative">
                       <FileText size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
                       <input
@@ -240,7 +258,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
 
-                    {/* Email */}
                     <div className="relative">
                       <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
                       <input
@@ -252,7 +269,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
 
-                    {/* Mensagem */}
                     <textarea
                       placeholder="Descreva seu projeto ou dúvida... *"
                       value={mensagem}
@@ -271,20 +287,16 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                   <motion.button
                     onClick={handleEnviar}
                     disabled={enviando}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: enviando ? 1 : 1.02 }}
+                    whileTap={{ scale: enviando ? 1 : 0.97 }}
                     className="mt-5 w-full flex items-center justify-center gap-2 bg-brand-accent text-black px-6 py-4 rounded-xl font-bold uppercase text-xs tracking-widest transition-all disabled:opacity-60"
                   >
                     {enviando ? (
-                      <><Loader2 size={16} className="animate-spin" /> Abrindo email...</>
+                      <><Loader2 size={16} className="animate-spin" /> Enviando...</>
                     ) : (
                       <><Send size={16} /> Enviar Mensagem</>
                     )}
                   </motion.button>
-
-                  <p className="mt-3 text-[10px] text-white/20 text-center">
-                    Seu cliente de email (Outlook, Gmail, etc.) será aberto com os dados preenchidos.
-                  </p>
                 </>
               ) : (
                 /* Estado de sucesso */
@@ -297,9 +309,9 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     <CheckCircle2 size={32} />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-white">Email pronto para enviar!</h3>
+                    <h3 className="text-xl font-bold text-white">Mensagem enviada!</h3>
                     <p className="text-sm text-white/50 max-w-xs">
-                      Seu cliente de email foi aberto com as informações preenchidas. Confira e clique em enviar.
+                      O Sergio recebeu seu contato e retornará em breve.
                     </p>
                   </div>
                   <motion.button
