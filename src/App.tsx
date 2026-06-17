@@ -62,15 +62,15 @@ const whatsappHref = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURICom
 // ─────────────────────────────────────────────────────────────────────────────
 // Tipagem para o gtag do Google Ads (evita erro de TypeScript)
 // ─────────────────────────────────────────────────────────────────────────────
-declare function gtag(...args: unknown[]): void;
+declare const dataLayer: Record<string, unknown>[];
 
 function dispararLeadGoogleAds() {
   try {
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'generate_lead');
+    if (typeof dataLayer !== 'undefined') {
+      dataLayer.push({ event: 'generate_lead' });
     }
   } catch (e) {
-    // gtag não carregado (ambiente de dev); silencia o erro
+    // dataLayer não disponível em dev; silencia
   }
 }
 
