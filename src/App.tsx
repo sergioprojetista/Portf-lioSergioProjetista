@@ -80,6 +80,7 @@ const EMAILJS = {
   serviceId:  'service_jlifenn',
   templateId: 'p3be4jd',
   publicKey:  'hlfkQo5wDplHH45e8',
+  privateKey: 'rv0MAb69JgrIe2A7T8nwg',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -143,9 +144,10 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          service_id:  EMAILJS.serviceId,
-          template_id: EMAILJS.templateId,
-          user_id:     EMAILJS.publicKey,
+          service_id:   EMAILJS.serviceId,
+          template_id:  EMAILJS.templateId,
+          user_id:      EMAILJS.publicKey,
+          accessToken:  EMAILJS.privateKey,
           template_params: {
             nome,
             cpf:        cpf || 'Não informado',
