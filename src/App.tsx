@@ -25,6 +25,7 @@ import {
   User,
   FileText,
   Loader2,
+  Phone,
 } from 'lucide-react';
 import { PROJECTS, TESTIMONIALS, ProjectCase } from './constants';
 import { cn } from './lib/utils';
@@ -95,6 +96,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
   const [email, setEmail] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
@@ -119,6 +121,13 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  };
+
+  const formatarWhatsApp = (valor: string) => {
+    const nums = valor.replace(/\D/g, '').slice(0, 11);
+    return nums
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d{1,4})$/, '$1-$2');
   };
 
   const handleCPF = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,6 +161,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
             nome,
             cpf:        cpf || 'Não informado',
             email_lead: email,
+            whatsapp:   whatsapp || 'Não informado',
             mensagem,
           },
         }),
@@ -171,7 +181,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleFechar = () => {
-    setNome(''); setCpf(''); setEmail(''); setMensagem('');
+    setNome(''); setCpf(''); setEmail(''); setWhatsapp(''); setMensagem('');
     setEnviado(false); setErro('');
     onClose();
   };
@@ -271,6 +281,18 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
 
+                    <div className="relative">
+                      <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                      <input
+                        type="text"
+                        placeholder="WhatsApp com DDD (opcional)"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(formatarWhatsApp(e.target.value))}
+                        className={`${inputClass} pl-9`}
+                        inputMode="numeric"
+                      />
+                    </div>
+
                     <textarea
                       placeholder="Descreva seu projeto ou dúvida... *"
                       value={mensagem}
@@ -344,9 +366,10 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 interface CaseCardProps {
   project: ProjectCase;
   index: number;
+  onAbrirContato: () => void;
 }
 
-const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
+const CaseCard: React.FC<CaseCardProps> = ({ project, index, onAbrirContato }) => {
   return (
     <motion.div
       id={`case-${project.id}`}
@@ -468,16 +491,14 @@ const CaseCard: React.FC<CaseCardProps> = ({ project, index }) => {
             </div>
           </div>
 
-          <motion.a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
+          <motion.button
+            onClick={onAbrirContato}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="flex items-center gap-2 px-6 py-3 bg-brand-accent text-black rounded-full text-[9px] font-bold uppercase tracking-widest shadow-lg shadow-brand-accent/10 whitespace-nowrap"
           >
-            <MessageSquare size={12} /> Quero um projeto assim
-          </motion.a>
+            <Mail size={12} /> Quero um projeto assim
+          </motion.button>
         </div>
 
         {/* Tags */}
@@ -686,16 +707,14 @@ export default function App() {
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <motion.a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.button
+              onClick={() => setModalContato(true)}
               whileHover={{ scale: 1.05, backgroundColor: '#ffffff' }}
               whileTap={{ scale: 0.95 }}
               className="bg-brand-accent text-black px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-brand-accent/10 inline-block"
             >
               Solicitar Orçamento
-            </motion.a>
+            </motion.button>
           </div>
 
           {/* Mobile hamburger */}
@@ -733,15 +752,12 @@ export default function App() {
                 {label}
               </a>
             ))}
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={fecharMenu}
+            <button
+              onClick={() => { fecharMenu(); setModalContato(true); }}
               className="mt-4 bg-brand-accent text-black px-8 py-4 rounded-full font-bold uppercase text-sm tracking-widest"
             >
               Solicitar Orçamento
-            </a>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1072,7 +1088,7 @@ export default function App() {
           </div>
         </div>
         {PROJECTS.map((project, index) => (
-          <CaseCard key={project.id} project={project} index={index} />
+          <CaseCard key={project.id} project={project} index={index} onAbrirContato={() => setModalContato(true)} />
         ))}
       </div>
 
@@ -1167,17 +1183,14 @@ export default function App() {
             Transforme seus desafios técnicos em eficiência produtiva com soluções de engenharia de alta precisão.
           </p>
           <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-            <motion.a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => dispararLeadGoogleAds()}
+            <motion.button
+              onClick={() => setModalContato(true)}
               whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0,0,0,0.2)' }}
               whileTap={{ scale: 0.95 }}
               className="bg-black text-white px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-transform flex items-center gap-3"
             >
-              <MessageSquare size={20} /> Falar no WhatsApp
-            </motion.a>
+              <Mail size={20} /> Solicitar Orçamento
+            </motion.button>
 
             <motion.button
               onClick={() => setModalContato(true)}
@@ -1185,7 +1198,7 @@ export default function App() {
               whileTap={{ scale: 0.95 }}
               className="bg-transparent border-2 border-black text-black px-12 py-6 rounded-full font-bold uppercase text-sm tracking-widest transition-all flex items-center gap-3"
             >
-              <Mail size={20} /> Enviar por Email
+              <Send size={20} /> Enviar Mensagem
             </motion.button>
           </div>
           <div className="pt-12 border-t border-black/10 flex flex-wrap justify-center gap-12 opacity-60">
